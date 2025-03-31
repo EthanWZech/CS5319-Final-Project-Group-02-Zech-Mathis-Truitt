@@ -1,9 +1,11 @@
 # Loom
 Project for Software Design &amp; Architecture 2025
 
+# Frontend
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
+The frontend is located in Loom/React/loom/.
 
 First, run the development server:
 
@@ -38,3 +40,5 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+# Backend
+The backend is located in Loom/Spring/loom/.

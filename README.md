@@ -42,3 +42,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # Backend
 The backend is located in Loom/Spring/loom/.
+
+Make sure to be running a PostGres server with a table titled "loom". You must enter the credentials and url for this server in Loom/Spring/loom/src/main/resources/application.properties.

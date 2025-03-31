@@ -2,7 +2,7 @@ import './App.css';
 import './Example.css'
 
 export const Example = () => {
-  const thingamajig = (num: number)=> {
+  const thingamajig = (num: number) => {
     // do stuff
     return num;
   }
@@ -16,3 +16,33 @@ export const Example = () => {
 };
 
 export default Example;
+
+//*
+//Creating States:
+//const [error, setError] = useState("");
+//
+//Setting the state:
+//setError(errorText);
+//
+//*
+//Data Objects:
+//export interface ApprovalInfo {
+//  approve: boolean;
+//  reason: string;
+//}
+//
+//*
+//Sharing Information From Other Components:
+//type DocToolProps = {
+//  loginInfo: LoginInfo;
+//}
+//
+//const DocumentToolDrawer: React.FC<DocToolProps> = ({ loginInfo }) => { }
+//
+//Then When Calling the Component:
+//<DocumentToolDrawer loginInfo={loginInfo} />
+//
+//*
+//Navigation:
+//  const navigate = useNavigate();
+//  navigate('/home')

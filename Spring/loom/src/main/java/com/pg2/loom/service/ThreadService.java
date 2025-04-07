@@ -5,6 +5,7 @@ import com.pg2.loom.repository.ThreadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,5 +20,9 @@ public class ThreadService {
 
     public Optional<Thread> getThreadById(Long id) {
         return threadRepository.findById(id);
+    }
+
+    public List<Thread> getMostRecentThreads() {
+        return threadRepository.findTop10ByOrderByPublishDateDesc();
     }
 }

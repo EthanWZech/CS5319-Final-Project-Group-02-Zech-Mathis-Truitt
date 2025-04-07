@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,5 +25,10 @@ public class ThreadController {
         Optional<Thread> threadOptional = threadService.getThreadById(id);
         return threadOptional.map(ResponseEntity::ok)
                              .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/recent")
+    public List<Thread> getRecentThreads() {
+        return threadService.getMostRecentThreads();
     }
 }

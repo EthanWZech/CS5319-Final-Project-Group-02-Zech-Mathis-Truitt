@@ -31,4 +31,9 @@ public class ThreadController {
     public List<Thread> getRecentThreads() {
         return threadService.getMostRecentThreads();
     }
+
+    @PostMapping
+    public Long createThread(@RequestBody Thread thread) {
+        return threadService.createThread(thread);
+    }
 }

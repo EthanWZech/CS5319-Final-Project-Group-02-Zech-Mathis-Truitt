@@ -25,4 +25,9 @@ public class ThreadService {
     public List<Thread> getMostRecentThreads() {
         return threadRepository.findTop10ByOrderByPublishDateDesc();
     }
+
+    public Long createThread(Thread thread) {
+        Thread savedThread = threadRepository.save(thread);
+        return savedThread.getId();
+    }    
 }

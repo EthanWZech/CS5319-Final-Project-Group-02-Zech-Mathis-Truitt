@@ -37,6 +37,11 @@ public class ThreadController {
         return threadService.getMostRecentThreads();
     }
 
+    @GetMapping("/search")
+    public List<Thread> searchThreads(@RequestParam String query) {
+        return threadService.getThreadsMatchingTitle(query);
+    }
+
     @PostMapping
     public Long createThread(@RequestBody Thread thread) {
         return threadService.createThread(thread);

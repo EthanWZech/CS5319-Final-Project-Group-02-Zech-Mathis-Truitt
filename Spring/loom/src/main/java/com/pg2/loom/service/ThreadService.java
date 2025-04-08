@@ -22,6 +22,10 @@ public class ThreadService {
         return threadRepository.findById(id);
     }
 
+    public List<Thread> getThreadsByTopic(String topic) {
+        return threadRepository.findByTopic(topic);
+    }
+
     public List<Thread> getMostRecentThreads() {
         return threadRepository.findTop10ByOrderByPublishDateDesc();
     }
@@ -29,5 +33,5 @@ public class ThreadService {
     public Long createThread(Thread thread) {
         Thread savedThread = threadRepository.save(thread);
         return savedThread.getId();
-    }    
+    }
 }

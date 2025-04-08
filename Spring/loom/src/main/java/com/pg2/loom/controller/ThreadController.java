@@ -27,6 +27,11 @@ public class ThreadController {
                              .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/topic/{topic}")
+    public List<Thread> getThreadsByTopic(@PathVariable String topic) {
+        return threadService.getThreadsByTopic(topic);
+    }
+
     @GetMapping("/recent")
     public List<Thread> getRecentThreads() {
         return threadService.getMostRecentThreads();

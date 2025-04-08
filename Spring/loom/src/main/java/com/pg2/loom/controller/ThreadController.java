@@ -46,4 +46,22 @@ public class ThreadController {
     public Long createThread(@RequestBody Thread thread) {
         return threadService.createThread(thread);
     }
+
+    @PostMapping("/{id}/upvote")
+    public ResponseEntity<Void> upvoteThread(@PathVariable Long id) {
+        boolean success = threadService.upvoteThread(id);
+        return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{id}/downvote")
+    public ResponseEntity<Void> downvoteThread(@PathVariable Long id) {
+        boolean success = threadService.downvoteThread(id);
+        return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteThread(@PathVariable Long id) {
+        boolean deleted = threadService.deleteThreadById(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 }

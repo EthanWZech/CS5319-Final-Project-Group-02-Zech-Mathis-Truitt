@@ -78,4 +78,27 @@ public class CommentService {
     public Optional<Comment> getCommentById(Long id) {
         return commentRepository.findById(id);
     }
+
+    public boolean upvoteComment(Long id) {
+        Optional<Comment> optional = commentRepository.findById(id);
+        if (optional.isPresent()) {
+            Comment comment = optional.get();
+            comment.setUpvotes(comment.getUpvotes() + 1);
+            commentRepository.save(comment);
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean downvoteComment(Long id) {
+        Optional<Comment> optional = commentRepository.findById(id);
+        if (optional.isPresent()) {
+            Comment comment = optional.get();
+            comment.setDownvotes(comment.getDownvotes() + 1);
+            commentRepository.save(comment);
+            return true;
+        }
+        return false;
+    }
+    
 }

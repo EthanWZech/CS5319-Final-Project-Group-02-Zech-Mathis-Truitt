@@ -95,4 +95,13 @@ public class Comment {
     public Comment getParentComment() {
         return parentComment;
     }
+
+    public void setUpvotes(Integer upvotes) {
+        this.upvotes = upvotes;
+    }
+    
+    public void setDownvotes(Integer downvotes) {
+        this.downvotes = downvotes;
+    }
+    
 }

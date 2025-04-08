@@ -54,4 +54,35 @@ public class ThreadService {
         Thread savedThread = threadRepository.save(thread);
         return savedThread.getId();
     }
+
+    public boolean upvoteThread(Long id) {
+        Optional<Thread> optional = threadRepository.findById(id);
+        if (optional.isPresent()) {
+            Thread thread = optional.get();
+            thread.setUpvotes(thread.getUpvotes() + 1);
+            threadRepository.save(thread);
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean downvoteThread(Long id) {
+        Optional<Thread> optional = threadRepository.findById(id);
+        if (optional.isPresent()) {
+            Thread thread = optional.get();
+            thread.setDownvotes(thread.getDownvotes() + 1);
+            threadRepository.save(thread);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteThreadById(Long id) {
+        Optional<Thread> optional = threadRepository.findById(id);
+        if (optional.isPresent()) {
+            threadRepository.delete(optional.get());
+            return true;
+        }
+        return false;
+    }    
 }

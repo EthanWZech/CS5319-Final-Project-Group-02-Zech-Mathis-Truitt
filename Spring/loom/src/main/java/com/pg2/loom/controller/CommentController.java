@@ -66,4 +66,16 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @PostMapping("/{id}/upvote")
+    public ResponseEntity<Void> upvoteComment(@PathVariable Long id) {
+        boolean success = commentService.upvoteComment(id);
+        return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{id}/downvote")
+    public ResponseEntity<Void> downvoteComment(@PathVariable Long id) {
+        boolean success = commentService.downvoteComment(id);
+        return success ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
 }

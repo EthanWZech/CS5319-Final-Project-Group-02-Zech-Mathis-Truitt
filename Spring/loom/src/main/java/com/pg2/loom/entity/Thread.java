@@ -28,7 +28,7 @@ public class Thread {
 
     private String image;
 
-    @OneToMany(mappedBy="thread", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="thread", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
     public Thread() {}
@@ -85,4 +85,12 @@ public class Thread {
     public List<Comment> getComments() {
         return comments;
     }
+
+    public void setUpvotes(Integer upvotes) {
+        this.upvotes = upvotes;
+    }
+    
+    public void setDownvotes(Integer downvotes) {
+        this.downvotes = downvotes;
+    }    
 }

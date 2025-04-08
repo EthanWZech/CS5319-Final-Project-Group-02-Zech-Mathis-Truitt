@@ -5,8 +5,12 @@ import com.pg2.loom.repository.ThreadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Collections;
 
 @Service
 public class ThreadService {
@@ -28,6 +32,22 @@ public class ThreadService {
 
     public List<Thread> getMostRecentThreads() {
         return threadRepository.findTop10ByOrderByPublishDateDesc();
+    }
+
+    public List<Thread> getThreadsMatchingTitle(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String[] words = input.toLowerCase().split("\\s+");
+        Set<Thread> resultSet = new HashSet<>();
+
+        for (String word : words) {
+            List<Thread> threads = threadRepository.findByTitleContainingIgnoreCase(word);
+            resultSet.addAll(threads); // Avoid duplicates
+        }
+
+        return new ArrayList<>(resultSet);
     }
 
     public Long createThread(Thread thread) {

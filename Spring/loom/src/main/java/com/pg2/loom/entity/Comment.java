@@ -1,5 +1,6 @@
 package com.pg2.loom.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -26,10 +27,11 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "threadId", nullable = false)
+    @JsonBackReference
     private Thread thread;
 
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
-    private List<Comment> replies;
+//    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
+//    private List<Comment> replies;
 
     @ManyToOne
     @JoinColumn(name = "parentCommentId", nullable = true)
@@ -38,7 +40,7 @@ public class Comment {
     public Comment() {}
 
     public Comment(Date publishDate, Integer upvotes, Integer downvotes, String username, String text, String image, Thread thread, Comment parentComment) {
-        replies = new ArrayList<Comment>();
+        //replies = new ArrayList<Comment>();
 
         this.publishDate = publishDate;
         this.upvotes = upvotes;
@@ -48,20 +50,24 @@ public class Comment {
         this.image = image;
 
         this.thread = thread;
-        this.thread.addComment(this);
+        //this.thread.addComment(this);
 
         if(parentComment != null) {
             this.parentComment = parentComment;
-            parentComment.addReply(this);
+            //parentComment.addReply(this);
         }
     }
 
-    public void addReply(Comment reply) {
-        replies.add(reply);
-    }
+//    public void addReply(Comment reply) {
+//        replies.add(reply);
+//    }
 
     public Long getId() {
         return id;
+    }
+
+    public Date getPublishDate() {
+        return publishDate;
     }
 
     public Integer getUpvotes() {
@@ -88,9 +94,9 @@ public class Comment {
         return thread;
     }
 
-    public List<Comment> getReplies() {
-        return replies;
-    }
+//    public List<Comment> getReplies() {
+//        return replies;
+//    }
 
     public Comment getParentComment() {
         return parentComment;

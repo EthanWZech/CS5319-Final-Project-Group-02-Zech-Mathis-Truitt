@@ -1,5 +1,6 @@
 package com.pg2.loom.controller;
 
+import com.pg2.loom.dto.AddCommentRequest;
 import com.pg2.loom.entity.Comment;
 import com.pg2.loom.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +31,10 @@ public class CommentController {
 
     @PostMapping("/thread/{threadId}")
     public ResponseEntity<Long> addCommentToThread(
-            @PathVariable Long threadId,
-            @RequestBody Map<String, String> payload) {
+            @RequestBody AddCommentRequest request) {
         
         try {
-            String username = payload.get("username");
-            String text = payload.get("text");
-            String image = payload.get("image");
-            
-            Long commentId = commentService.addCommentToThread(threadId, username, text, image);
+            Long commentId = commentService.addCommentToThread(request);
             return ResponseEntity.ok(commentId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -49,16 +45,10 @@ public class CommentController {
 
     @PostMapping("/thread/{threadId}/comment/{commentId}/reply")
     public ResponseEntity<Long> addReplyToComment(
-            @PathVariable Long threadId,
-            @PathVariable Long commentId,
-            @RequestBody Map<String, String> payload) {
+            @RequestBody AddCommentRequest request) {
         
         try {
-            String username = payload.get("username");
-            String text = payload.get("text");
-            String image = payload.get("image");
-            
-            Long replyId = commentService.addReplyToComment(threadId, commentId, username, text, image);
+            Long replyId = commentService.addReplyToComment(request);
             return ResponseEntity.ok(replyId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

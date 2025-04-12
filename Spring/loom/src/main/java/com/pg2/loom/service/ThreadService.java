@@ -1,16 +1,14 @@
 package com.pg2.loom.service;
 
+import com.pg2.loom.dto.CommentNodeDto;
+import com.pg2.loom.dto.ThreadWithCommentsDto;
+import com.pg2.loom.entity.Comment;
 import com.pg2.loom.entity.Thread;
 import com.pg2.loom.repository.ThreadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Collections;
+import java.util.*;
 
 @Service
 public class ThreadService {
@@ -24,6 +22,14 @@ public class ThreadService {
 
     public Optional<Thread> getThreadById(Long id) {
         return threadRepository.findById(id);
+    }
+
+    public ThreadWithCommentsDto getThreadAsTree(Long id) {
+        Thread thread = threadRepository.findById(id).orElseThrow();
+        List<Comment> allComments = thread.getComments();
+        List<CommentNodeDto> tree = buildCommentTree(allComments);
+
+        return new ThreadWithCommentsDto(thread, tree);
     }
 
     public List<Thread> getThreadsByTopic(String topic) {
@@ -84,5 +90,27 @@ public class ThreadService {
             return true;
         }
         return false;
-    }    
+    }
+
+    public List<CommentNodeDto> buildCommentTree(List<Comment> comments) {
+        Map<Long, CommentNodeDto> dtoMap = new HashMap<>();
+        List<CommentNodeDto> roots = new ArrayList<>();
+
+        for(Comment comment : comments) {
+            dtoMap.put(comment.getId(), new CommentNodeDto(comment));
+        }
+
+        for(Comment comment : comments) {
+            CommentNodeDto dto = dtoMap.get(comment.getId());
+            if(comment.getParentComment() != null) {
+                Long parentId = comment.getParentComment().getId();
+                dtoMap.get(parentId).getReplies().add(dto);
+            }
+            else {
+                roots.add(dto);
+            }
+        }
+
+        return roots;
+    }
 }

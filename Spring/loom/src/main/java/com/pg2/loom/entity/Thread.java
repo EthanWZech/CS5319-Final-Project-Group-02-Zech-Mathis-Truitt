@@ -1,5 +1,6 @@
 package com.pg2.loom.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -28,7 +29,8 @@ public class Thread {
 
     private String image;
 
-    @OneToMany(mappedBy="thread", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy="thread", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Comment> comments;
 
     public Thread() {}
@@ -52,6 +54,10 @@ public class Thread {
 
     public Long getId() {
         return id;
+    }
+
+    public Date getPublishDate() {
+        return publishDate;
     }
 
     public Integer getUpvotes() {

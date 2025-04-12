@@ -1,5 +1,6 @@
 package com.pg2.loom.service;
 
+import com.pg2.loom.dto.AddCommentRequest;
 import com.pg2.loom.entity.Comment;
 import com.pg2.loom.entity.Thread;
 import com.pg2.loom.repository.CommentRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,8 +24,8 @@ public class CommentService {
         this.threadRepository = threadRepository;
     }
 
-    public Long addCommentToThread(Long threadId, String username, String text, String image) {
-        Optional<Thread> threadOptional = threadRepository.findById(threadId);
+    public Long addCommentToThread(AddCommentRequest request) {
+        Optional<Thread> threadOptional = threadRepository.findById(request.getThreadId());
         
         if (threadOptional.isPresent()) {
             Thread thread = threadOptional.get();
@@ -32,9 +34,9 @@ public class CommentService {
                 new Date(System.currentTimeMillis()),
                 0,
                 0,
-                username,
-                text,
-                image,
+                    request.getUsername(),
+                    request.getText(),
+                    request.getImage(),
                 thread,
                 null
             );
@@ -44,12 +46,12 @@ public class CommentService {
         }
         
         
-        throw new IllegalArgumentException("Thread with ID " + threadId + " not found");
+        throw new IllegalArgumentException("Thread with ID " + request.getThreadId() + " not found");
     }
     
-    public Long addReplyToComment(Long threadId, Long parentCommentId, String username, String text, String image) {
-        Optional<Thread> threadOptional = threadRepository.findById(threadId);
-        Optional<Comment> parentCommentOptional = commentRepository.findById(parentCommentId);
+    public Long addReplyToComment(AddCommentRequest request) {
+        Optional<Thread> threadOptional = threadRepository.findById(request.getThreadId());
+        Optional<Comment> parentCommentOptional = commentRepository.findById(request.getParentCommentId());
         
         if (threadOptional.isPresent() && parentCommentOptional.isPresent()) {
             Thread thread = threadOptional.get();
@@ -60,9 +62,9 @@ public class CommentService {
                 new Date(System.currentTimeMillis()),
                 0,
                 0,
-                username,
-                text,
-                image,
+                    request.getUsername(),
+                    request.getText(),
+                    request.getImage(),
                 thread,
                 parentComment
             );
@@ -77,6 +79,10 @@ public class CommentService {
     
     public Optional<Comment> getCommentById(Long id) {
         return commentRepository.findById(id);
+    }
+
+    public List<Comment> getCommentsByThreadId(Long threadId) {
+        return commentRepository.findByThreadIdOrderByPublishDateDesc(threadId);
     }
 
     public boolean upvoteComment(Long id) {

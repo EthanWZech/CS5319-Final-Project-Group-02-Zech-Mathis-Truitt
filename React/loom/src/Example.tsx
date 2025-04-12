@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react';
 import './App.css';
 import './Example.css'
+import { AddCommentRequest } from './dto/AddCommentRequest';
+import { ThreadWithComments } from './dto/ThreadWithComments';
+import WebSocketThreadService from './websocket/WebSocketThreadService';
 
 export const Example = () => {
   const thingamajig = (num: number) => {
@@ -7,12 +11,38 @@ export const Example = () => {
     return num;
   }
 
-  return (
-    <div>
-        <h1 className='text-blue-500'>Hello</h1>
-        <div>{thingamajig(3)}</div>
-    </div>
-  )
+  const [thread, setThread] = useState<ThreadWithComments | null>(null);
+
+  useEffect(() => {
+    WebSocketThreadService.connect("1", (data) => { setThread(data) });
+
+    return () => {
+      WebSocketThreadService.disconnect();
+    }
+  }, ["1"]);
+
+  if(!thread){
+    return (
+      <div>
+          <h1 className='text-blue-500'>Hello</h1>
+          <div>{thingamajig(3)}</div>
+          Loading...
+      </div>
+    )
+  }
+
+  else{
+    return (
+      <div>
+          <h1 className='text-blue-500'>Hello</h1>
+          <div>{thingamajig(3)}</div>
+          {thread.text}
+          {thread.comments.map((item, index) => (
+            <div key={index}>{item.text}</div>
+          ))}
+      </div>
+    )
+  }
 };
 
 export default Example;

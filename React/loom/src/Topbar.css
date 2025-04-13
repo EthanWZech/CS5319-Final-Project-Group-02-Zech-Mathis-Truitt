@@ -118,3 +118,10 @@
     justify-content: center;
     align-items: center;
 }
+.usernameInput {
+    padding: 6px 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 120px;
+}

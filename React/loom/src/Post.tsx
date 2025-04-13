@@ -1,7 +1,17 @@
 import { Link } from 'react-router-dom'
 import './Post.css'
 
-type PostVars = {
+export type CommentType = {
+    id: string;
+    username: string;
+    text: string;
+    score: number;
+    timestamp: string;
+    replies?: CommentType[];
+};
+
+export type PostVars = {
+    id: number,
     score: number;
     username: string;
     title: string;
@@ -9,10 +19,12 @@ type PostVars = {
     topic: string;
     timestamp: string;
     imageUrl?: string;
+    comments?: CommentType[];
 };
 
-const Post = ({ username, score, title, content, topic, timestamp, imageUrl }: PostVars) => {
+const Post = ({ id, username, score, title, content, topic, timestamp, imageUrl, comments }: PostVars) => {
     return (
+        <Link to={`/postview/${id}`} state={{ id, username, score, title, content, topic, timestamp, imageUrl, comments }} style={{ textDecoration: 'none', color: 'inherit' }}>
         <div className="post">
             <div className="postHeader">
                 <span>{username}</span> | <span>{topic}</span> | <span>{timestamp}</span>
@@ -35,6 +47,7 @@ const Post = ({ username, score, title, content, topic, timestamp, imageUrl }: P
                 <div className="text">{content}</div>
             </div>
         </div>
+        </Link>
     );
 };
 

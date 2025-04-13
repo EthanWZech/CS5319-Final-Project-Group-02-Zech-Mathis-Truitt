@@ -1,7 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
-import Example from './Example'
 import Home from './Home'
+import PostView from './PostView'
+import New from './New'
 import TopBar from './Topbar'; 
 
 function App() {
@@ -9,6 +10,8 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/New" element={<New />} />
+        <Route path="/postview/:id" element={<PostView />} />
       </Routes>
       <TopBar/>
     </div>

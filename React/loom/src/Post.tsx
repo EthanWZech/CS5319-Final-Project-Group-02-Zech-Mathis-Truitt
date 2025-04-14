@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import './Post.css'
 
 export type CommentType = {
-    id: string;
+    id: number;
     username: string;
     text: string;
     score: number;
-    timestamp: string;
+    timestamp?: string;
+    threadId: number;
     replies?: CommentType[];
 };
 
@@ -17,24 +18,21 @@ export type PostVars = {
     title: string;
     content: string;
     topic: string;
-    timestamp: string;
     imageUrl?: string;
     comments?: CommentType[];
 };
 
-const Post = ({ id, username, score, title, content, topic, timestamp, imageUrl, comments }: PostVars) => {
+const Post = ({ id, username, score, title, content, topic, imageUrl, comments }: PostVars) => {
     return (
-        <Link to={`/postview/${id}`} state={{ id, username, score, title, content, topic, timestamp, imageUrl, comments }} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link to={`/postview/${id}`} state={{ id, username, score, title, content, topic, imageUrl, comments }} style={{ textDecoration: 'none', color: 'inherit' }}>
         <div className="post">
             <div className="postHeader">
-                <span>{username}</span> | <span>{topic}</span> | <span>{timestamp}</span>
+                <span>{username}</span> | <span>{topic}</span> 
             </div>
             <div className="importantInfo">
                 <div className="title">{title}</div>
                 <div className="scoreSystem">
-                    <button style={{color:'#90D280'}}>↑</button>
                     <span className={`score ${score > 0 ? 'positive' : score < 0 ? 'negative' : 'neutral'}`}>{score}</span>
-                    <button style={{color:'#C8797A'}}>↓</button>
                 </div>
             </div>
             

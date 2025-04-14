@@ -1,60 +1,129 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { PostVars } from './Post';
-import './PostView.css'
+import './PostView.css';
 import Comment from './Comment';
-import { CommentType } from './Post'; 
+import WebSocketThreadService from './websocket/WebSocketThreadService';
+import { ThreadWithComments } from './dto/ThreadWithComments';
+import { CommentType } from './Post';
+
+const normalizeCommentNode = (
+    node: any,
+    threadId: number
+): CommentType => ({
+    id: node.id ?? Math.floor(Math.random() * 100000),
+    username: node.username ?? 'Anonymous',
+    text: node.text ?? '',
+    score: node.score ?? 0,
+    timestamp: node.timestamp ?? 'now',
+    threadId,
+    replies: (node.replies ?? []).map((r: any) =>
+        normalizeCommentNode(r, threadId)
+    ),
+});
 
 const PostView = () => {
-  const location = useLocation();
-  const post = location.state as PostVars | null;
+    const location = useLocation();
+    const post = location.state as PostVars | null;
 
-  if (!post) {
-    return <div>Post not found or missing data.</div>;
-  }
+    const [thread, setThread] = useState<ThreadWithComments | null>(null);
+    const [commentText, setCommentText] = useState('');
 
-  console.log('Post in PostView:', post);
-  console.log('Comments:', post.comments);
+    useEffect(() => {
+        if (!post) return;
 
-  return (
-    <div className="postView">
+        WebSocketThreadService.connect(post.id.toString(), (data) => {
+        setThread(data);
+        });
+
+        return () => {
+        WebSocketThreadService.disconnect();
+        };
+    }, [post]);
+
+    if (!post || !thread) {
+        return <div style={{color: '#000000'}}>Post not found or loading...</div>;
+    }
+
+    const handleAddComment = () => {
+        if (!commentText.trim()) return;
+
+        WebSocketThreadService.addComment({
+        threadId: thread.id,
+        parentCommentId: null,
+        username: 'TestUser',
+        text: commentText,
+        image: null
+        });
+
+        setCommentText('');
+    };
+
+    const handleVote = (upvote: boolean) => {
+        WebSocketThreadService.sendVote({ vote: upvote });
+    };
+
+    return (
+        <div className="postView">
         <div className="postHeader">
-            <span>{post.username}</span> | <span>{post.topic}</span> | <span>{post.timestamp}</span>
+            <span>{thread.username}</span> | <span>{thread.topic}</span>
         </div>
         <div className="importantInfo">
-            <div className="title">{post.title}</div>
+            <div className="title">{thread.title}</div>
             <div className="scoreSystem">
-                <button style={{color:'#90D280'}}>↑</button>
-                <span className={`score ${post.score > 0 ? 'positive' : post.score < 0 ? 'negative' : 'neutral'}`}>{post.score}</span>
-                <button style={{color:'#C8797A'}}>↓</button>
+            <button style={{ color: '#90D280' }} onClick={() => handleVote(true)}>↑</button>
+            <span
+                className={`score ${
+                thread.upvotes - thread.downvotes > 0
+                    ? 'positive'
+                    : thread.upvotes - thread.downvotes < 0
+                    ? 'negative'
+                    : 'neutral'
+                }`}
+            >
+                {thread.upvotes - thread.downvotes}
+            </span>
+            <button style={{ color: '#C8797A' }} onClick={() => handleVote(false)}>↓</button>
             </div>
         </div>
 
         <div className="postContent">
-            {post.imageUrl && (
-                <div className="postImage">
-                <img src={post.imageUrl} alt="Image" />
-                </div>
+            {thread.image && (
+            <div className="postImage">
+                <img src={thread.image} alt="Image" />
+            </div>
             )}
-            <div className="text">{post.content}</div>
+            <div className="text">{thread.text}</div>
         </div>
 
-        {post.imageUrl && (
+        {thread.image && (
             <div className="postImageMirror">
-                <img src={post.imageUrl} alt="Image" />
+            <img src={thread.image} alt="Image" />
             </div>
         )}
+
         <div className="commentBar">
             <div className="commentTitle">Comment</div>
             <div className="importantInfo">
-                <input className="commentTyper" type="text" placeholder=" Reply..." />
-                <button className="commentButton">💬</button>
+            <input
+                className="commentTyper"
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder=" Reply..."
+            />
+            <button className="commentButton" onClick={handleAddComment}>💬</button>
             </div>
         </div>
-        {post.comments?.map((comment: CommentType) => (
-            <Comment key={comment.id} comment={comment} />
+
+        {(thread.comments ?? []).map((comment, index) => (
+            <Comment
+            key={comment.id ?? index}
+            comment={normalizeCommentNode(comment, thread.id)}
+            />
         ))}
-    </div>
-  );
+        </div>
+    );
 };
 
 export default PostView;

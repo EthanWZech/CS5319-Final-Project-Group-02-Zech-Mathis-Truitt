@@ -1,5 +1,6 @@
 import { AddCommentRequest } from "../dto/AddCommentRequest";
 import { ThreadWithComments } from "../dto/ThreadWithComments";
+import { VoteRequest } from "../dto/VoteRequest";
 import { WebSocketRequest } from "../dto/WebSocketRequest";
 
 type ThreadWithCommentsListener = (data: ThreadWithComments) => void;
@@ -55,6 +56,13 @@ class WebSocketThreadService {
     addComment(data: AddCommentRequest) {
         if (this.socket?.readyState === WebSocket.OPEN) {
             let request: WebSocketRequest = { type: "addComment", payload: data };
+            this.socket.send(JSON.stringify(request));
+        }
+    }
+
+    sendVote(data: VoteRequest) {
+        if (this.socket?.readyState === WebSocket.OPEN) {
+            let request: WebSocketRequest = { type: "vote", payload: data };
             this.socket.send(JSON.stringify(request));
         }
     }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg2.loom.dto.AddCommentRequest;
 import com.pg2.loom.dto.ThreadWithCommentsDto;
+import com.pg2.loom.dto.VoteRequest;
 import com.pg2.loom.entity.Comment;
 import com.pg2.loom.entity.Thread;
 import com.pg2.loom.message.TestMessage;
@@ -54,13 +55,25 @@ public class WebSocketThreadHandler extends TextWebSocketHandler {
 
         switch (type) {
             case "addComment":
-                AddCommentRequest request = mapper.readValue(payload.toString(), AddCommentRequest.class);
+                AddCommentRequest request1 = mapper.readValue(payload.toString(), AddCommentRequest.class);
 
-                if(request.getParentCommentId() == null) {
-                    commentService.addCommentToThread(request);
+                if(request1.getParentCommentId() == null) {
+                    commentService.addCommentToThread(request1);
                 }
                 else{
-                    commentService.addReplyToComment(request);
+                    commentService.addReplyToComment(request1);
+                }
+
+                sendThread(threadId);
+                break;
+            case "vote":
+                VoteRequest request2 = mapper.readValue(payload.toString(), VoteRequest.class);
+
+                if(request2.isVote()) {
+                    threadService.upvoteThread(Long.valueOf(threadId));
+                }
+                else{
+                    threadService.downvoteThread(Long.valueOf(threadId));
                 }
 
                 sendThread(threadId);

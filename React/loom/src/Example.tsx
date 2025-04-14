@@ -27,11 +27,19 @@ export const Example = () => {
   }, ["1"]);
 
   const postComment = (msg: string) => {
-    WebSocketThreadService.addComment( { threadId: 1, parentCommentId: null, username: "TestCommenter", text: msg, image: null } )
+    WebSocketThreadService.addComment( { threadId: 1, parentCommentId: null, username: "TestCommenter", text: msg, image: null } );
   }
 
   const postThread = (msg: string) => {
-    WebSocketHomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } )
+    WebSocketHomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } );
+  }
+
+  const upvoteThread = () => {
+    WebSocketThreadService.sendVote( { vote: true });
+  }
+
+  const downvoteThread = () => {
+    WebSocketThreadService.sendVote( { vote: false });
   }
 
   if(!thread || !homeThreads){
@@ -57,9 +65,11 @@ export const Example = () => {
           <button onClick={() => postComment("This is a test comment")}>Send Comment</button>
           <div>This is the most recent Threads</div>
           {homeThreads.threads.map((item, index) => (
-            <div key={index}>{item.title}</div>
+            <div key={index}>{item.title} Upvotes: {item.upvotes} Downvotes: {item.downvotes}</div>
           ))}
           <button onClick={() => postThread("This is a test thread")}>Send Thread</button>
+          <button onClick={() => upvoteThread()}>Upvote Thread 1</button>
+          <button onClick={() => downvoteThread()}>Downvote Thread 1</button>
       </div>
     )
   }

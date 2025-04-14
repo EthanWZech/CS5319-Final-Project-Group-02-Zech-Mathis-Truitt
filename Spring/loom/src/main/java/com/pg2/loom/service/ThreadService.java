@@ -1,6 +1,8 @@
 package com.pg2.loom.service;
 
+import com.pg2.loom.dto.AddThreadRequest;
 import com.pg2.loom.dto.CommentNodeDto;
+import com.pg2.loom.dto.ThreadDto;
 import com.pg2.loom.dto.ThreadWithCommentsDto;
 import com.pg2.loom.entity.Comment;
 import com.pg2.loom.entity.Thread;
@@ -36,8 +38,15 @@ public class ThreadService {
         return threadRepository.findByTopic(topic);
     }
 
-    public List<Thread> getMostRecentThreads() {
-        return threadRepository.findTop10ByOrderByPublishDateDesc();
+    public List<ThreadDto> getMostRecentThreads() {
+        List<Thread> threads = threadRepository.findTop10ByOrderByPublishDateDesc();
+        List<ThreadDto> threadDtos = new ArrayList<>();
+
+        for(Thread thread : threads) {
+            threadDtos.add(new ThreadDto(thread));
+        }
+
+        return threadDtos;
     }
 
     public List<Thread> getThreadsMatchingTitle(String input) {
@@ -56,8 +65,8 @@ public class ThreadService {
         return new ArrayList<>(resultSet);
     }
 
-    public Long createThread(Thread thread) {
-        Thread savedThread = threadRepository.save(thread);
+    public Long createThread(AddThreadRequest thread) {
+        Thread savedThread = threadRepository.save(new Thread(thread));
         return savedThread.getId();
     }
 

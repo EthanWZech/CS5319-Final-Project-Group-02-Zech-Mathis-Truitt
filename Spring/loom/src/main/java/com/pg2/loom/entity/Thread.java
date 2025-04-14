@@ -1,6 +1,7 @@
 package com.pg2.loom.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.pg2.loom.dto.AddThreadRequest;
 import jakarta.persistence.*;
 
 import java.sql.Date;
@@ -46,6 +47,32 @@ public class Thread {
         this.title = title;
         this.text = text;
         this.image = image;
+    }
+
+    public Thread(String topic, String username, String title, String text, String image) {
+        comments = new ArrayList<Comment>();
+
+        this.publishDate = new Date(System.currentTimeMillis());
+        this.upvotes = 0;
+        this.downvotes = 0;
+        this.topic = topic;
+        this.username = username;
+        this.title = title;
+        this.text = text;
+        this.image = image;
+    }
+
+    public Thread(AddThreadRequest thread) {
+        comments = new ArrayList<Comment>();
+
+        this.publishDate = new Date(System.currentTimeMillis());
+        this.upvotes = 0;
+        this.downvotes = 0;
+        this.topic = thread.getTopic();
+        this.username = thread.getUsername();
+        this.title = thread.getTitle();
+        this.text = thread.getText();
+        this.image = thread.getImage();
     }
 
     public void addComment(Comment comment) {

@@ -1,5 +1,6 @@
 package com.pg2.loom.websockets;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg2.loom.dto.AddCommentRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,16 +38,11 @@ public class WebSocketThreadHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("Connection Made");
-
         String threadId = extractThreadId(session);
         threads.putIfAbsent(threadId, new CopyOnWriteArraySet<>());
         threads.get(threadId).add(session);
 
-        ThreadWithCommentsDto threadTree = threadService.getThreadAsTree(Long.valueOf(threadId));
-
-        TestMessage testMessage = new TestMessage("System", "Connected to thread: " + threadId);
-        session.sendMessage(new TextMessage(mapper.writeValueAsString(threadTree)));
+        sendThread(threadId);
     }
 
     @Override
@@ -66,22 +63,9 @@ public class WebSocketThreadHandler extends TextWebSocketHandler {
                     commentService.addReplyToComment(request);
                 }
 
-                ThreadWithCommentsDto threadTree = threadService.getThreadAsTree(Long.valueOf(threadId));
-                session.sendMessage(new TextMessage(mapper.writeValueAsString(threadTree)));
-                
+                sendThread(threadId);
                 break;
         }
-
-        System.out.println("Received TextMessage: " + message.getPayload());
-
-
-//        TestMessage testMessage = mapper.readValue(message.getPayload(), TestMessage.class);
-//
-//        for (WebSocketSession client : threads.getOrDefault(threadId, new CopyOnWriteArraySet<>())) {
-//            if(client.isOpen()) {
-//                client.sendMessage(new TextMessage(mapper.writeValueAsString(testMessage)));
-//            }
-//        }
     }
 
     @Override
@@ -93,5 +77,13 @@ public class WebSocketThreadHandler extends TextWebSocketHandler {
     private String extractThreadId(WebSocketSession session) {
         String path = session.getUri().getPath();
         return path.substring(path.lastIndexOf('/') + 1);
+    }
+
+    private void sendThread(String threadId) throws Exception {
+        ThreadWithCommentsDto threadTree = threadService.getThreadAsTree(Long.valueOf(threadId));
+
+        for(WebSocketSession session : threads.getOrDefault(threadId, new CopyOnWriteArraySet<>())) {
+            session.sendMessage(new TextMessage(mapper.writeValueAsString(threadTree)));
+        }
     }
 }

@@ -4,6 +4,8 @@ import './Example.css'
 import { AddCommentRequest } from './dto/AddCommentRequest';
 import { ThreadWithComments } from './dto/ThreadWithComments';
 import WebSocketThreadService from './websocket/WebSocketThreadService';
+import WebSocketHomeService from './websocket/WebSocketHomeService';
+import { HomeThreads } from './dto/HomeThreads';
 
 export const Example = () => {
   const thingamajig = (num: number) => {
@@ -12,12 +14,15 @@ export const Example = () => {
   }
 
   const [thread, setThread] = useState<ThreadWithComments | null>(null);
+  const [homeThreads, setHomeThreads] = useState<HomeThreads | null>(null);
 
   useEffect(() => {
     WebSocketThreadService.connect("1", (data) => { setThread(data) });
+    WebSocketHomeService.connect((data) => { setHomeThreads(data) })
 
     return () => {
       WebSocketThreadService.disconnect();
+      WebSocketHomeService.disconnect();
     }
   }, ["1"]);
 
@@ -25,7 +30,11 @@ export const Example = () => {
     WebSocketThreadService.addComment( { threadId: 1, parentCommentId: null, username: "TestCommenter", text: msg, image: null } )
   }
 
-  if(!thread){
+  const postThread = (msg: string) => {
+    WebSocketHomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } )
+  }
+
+  if(!thread || !homeThreads){
     return (
       <div>
           <h1 className='text-blue-500'>Hello</h1>
@@ -40,11 +49,17 @@ export const Example = () => {
       <div>
           <h1 className='text-blue-500'>Hello</h1>
           <div>{thingamajig(3)}</div>
+          <div>This is Thread 1</div>
           {thread.text}
           {thread.comments.map((item, index) => (
             <div key={index}>{item.text}</div>
           ))}
           <button onClick={() => postComment("This is a test comment")}>Send Comment</button>
+          <div>This is the most recent Threads</div>
+          {homeThreads.threads.map((item, index) => (
+            <div key={index}>{item.title}</div>
+          ))}
+          <button onClick={() => postThread("This is a test thread")}>Send Thread</button>
       </div>
     )
   }

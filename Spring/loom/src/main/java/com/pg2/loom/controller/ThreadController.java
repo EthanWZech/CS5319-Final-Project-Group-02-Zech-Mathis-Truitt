@@ -1,5 +1,7 @@
 package com.pg2.loom.controller;
 
+import com.pg2.loom.dto.AddThreadRequest;
+import com.pg2.loom.dto.ThreadDto;
 import com.pg2.loom.entity.Thread;
 import com.pg2.loom.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class ThreadController {
     }
 
     @GetMapping("/recent")
-    public List<Thread> getRecentThreads() {
+    public List<ThreadDto> getRecentThreads() {
         return threadService.getMostRecentThreads();
     }
 
@@ -43,7 +45,7 @@ public class ThreadController {
     }
 
     @PostMapping
-    public Long createThread(@RequestBody Thread thread) {
+    public Long createThread(@RequestBody AddThreadRequest thread) {
         return threadService.createThread(thread);
     }
 

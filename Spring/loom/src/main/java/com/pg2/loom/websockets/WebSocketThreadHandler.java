@@ -42,8 +42,6 @@ public class WebSocketThreadHandler extends TextWebSocketHandler {
         threads.putIfAbsent(threadId, new CopyOnWriteArraySet<>());
         threads.get(threadId).add(session);
 
-        Optional<Thread> thread = threadService.getThreadById(Long.valueOf(threadId));
-        List<Comment> comments = commentService.getCommentsByThreadId(Long.valueOf(threadId));
         ThreadWithCommentsDto threadTree = threadService.getThreadAsTree(Long.valueOf(threadId));
 
         TestMessage testMessage = new TestMessage("System", "Connected to thread: " + threadId);
@@ -67,6 +65,11 @@ public class WebSocketThreadHandler extends TextWebSocketHandler {
                 else{
                     commentService.addReplyToComment(request);
                 }
+
+                ThreadWithCommentsDto threadTree = threadService.getThreadAsTree(Long.valueOf(threadId));
+                session.sendMessage(new TextMessage(mapper.writeValueAsString(threadTree)));
+                
+                break;
         }
 
         System.out.println("Received TextMessage: " + message.getPayload());

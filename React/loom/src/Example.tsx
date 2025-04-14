@@ -21,6 +21,10 @@ export const Example = () => {
     }
   }, ["1"]);
 
+  const postComment = (msg: string) => {
+    WebSocketThreadService.addComment( { threadId: 1, parentCommentId: null, username: "TestCommenter", text: msg, image: null } )
+  }
+
   if(!thread){
     return (
       <div>
@@ -40,6 +44,7 @@ export const Example = () => {
           {thread.comments.map((item, index) => (
             <div key={index}>{item.text}</div>
           ))}
+          <button onClick={() => postComment("This is a test comment")}>Send Comment</button>
       </div>
     )
   }

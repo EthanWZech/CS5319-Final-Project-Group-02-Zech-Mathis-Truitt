@@ -44,18 +44,18 @@ class WebSocketThreadService {
         };
     }
 
-    addComment(data: AddCommentRequest) {
-        if (this.socket?.readyState === WebSocket.OPEN) {
-            let request: WebSocketRequest = { type: "addComment", payload: data };
-            this.socket.send(JSON.stringify(request));
-        }
-    }
-
     disconnect() {
         if(this.socket) {
             this.socket.close();
             this.socket = null;
             this.threadListener = null;
+        }
+    }
+
+    addComment(data: AddCommentRequest) {
+        if (this.socket?.readyState === WebSocket.OPEN) {
+            let request: WebSocketRequest = { type: "addComment", payload: data };
+            this.socket.send(JSON.stringify(request));
         }
     }
 }

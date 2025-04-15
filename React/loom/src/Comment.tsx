@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CommentType } from './Post';
+import { getGlobalUsername } from './Topbar';
 import WebSocketThreadService from './websocket/WebSocketThreadService';
 import './Comment.css';
 
@@ -14,12 +15,12 @@ const [replyText, setReplyText] = useState('');
 const handleReplySubmit = () => {
     if (!replyText.trim() || !comment.id || !comment.threadId) return;
 
-    WebSocketThreadService.addComment({
-    threadId: comment.threadId,
-    parentCommentId: comment.id,
-    username: 'TestUser',
-    text: replyText,
-    image: null
+        WebSocketThreadService.addComment({
+        threadId: comment.threadId,
+        parentCommentId: comment.id,
+        username: getGlobalUsername(),
+        text: replyText,
+        image: null
     });
 
     setReplyText('');
@@ -32,13 +33,13 @@ return (
         <div className="postHeader">
         <span>{comment.username}</span>
         </div>
-        <div className="scoreSystem">
+        {/* <div className="scoreSystem">
         <button style={{ color: '#90D280' }}>↑</button>
         <span className={`score ${comment.score > 0 ? 'positive' : comment.score < 0 ? 'negative' : 'neutral'}`}>
             {comment.score}
         </span>
         <button style={{ color: '#C8797A' }}>↓</button>
-        </div>
+        </div> */}
     </div>
 
     <div className="postContent">

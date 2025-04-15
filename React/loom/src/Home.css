@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
-.postFeed {
-    margin-top: 50px;
+.postFeed{
+    position: absolute;
+    top: 120px;
+    left: 22.8%;
+    box-sizing: border-box;
+    padding-top: 50px;
 }

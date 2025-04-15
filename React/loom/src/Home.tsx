@@ -1,18 +1,30 @@
 import { useEffect, useState } from 'react';
-import WebSocketHomeService from './websocket/WebSocketHomeService';
 import { HomeThreads } from './dto/HomeThreads';
 import Post from './Post';  
+import WebSocketHomeService from './websocket/WebSocketHomeService';
 
 const Home = () => {
   const [homeThreads, setHomeThreads] = useState<HomeThreads | null>(null);
 
   useEffect(() => {
-    WebSocketHomeService.connect((data) => {
-      setHomeThreads(data);
-    });
-
+    const listener = (data: HomeThreads) => {
+      setHomeThreads((prev) => {
+        if (!prev) return data;
+  
+        const newThreads = data.threads.filter(
+          (newThread) => !prev.threads.some((t) => t.id === newThread.id)
+        );
+  
+        return {
+          ...prev,
+          threads: [...newThreads, ...prev.threads],
+        };
+      });
+    };
+  
+    WebSocketHomeService.connect(listener);
+  
     return () => {
-      WebSocketHomeService.disconnect();
     };
   }, []);
 

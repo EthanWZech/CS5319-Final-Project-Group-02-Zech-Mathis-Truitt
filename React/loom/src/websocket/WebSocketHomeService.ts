@@ -53,11 +53,21 @@ private socket: WebSocket | null = null;
     }
 
     addThread(data: AddThreadRequest) {
-            if (this.socket?.readyState === WebSocket.OPEN) {
-                let request: WebSocketRequest = { type: "addThread", payload: data };
-                this.socket.send(JSON.stringify(request));
-            }
+        const send = () => {
+            const request: WebSocketRequest = { type: "addThread", payload: data };
+            this.socket?.send(JSON.stringify(request));
+        };
+        
+        if (this.socket?.readyState === WebSocket.OPEN) {
+            send();
+        } else if (this.socket?.readyState === WebSocket.CONNECTING) {
+            this.socket.addEventListener("open", send, { once: true });
+        } else {
+            console.warn("WebSocket is not connected. Reconnecting...");
+            this.connect(() => {}); // optional no-op listener
+            this.socket?.addEventListener("open", send, { once: true });
         }
+    }
 }
 
 export default new WebSocketHomeService

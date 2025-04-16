@@ -10,7 +10,7 @@ Postgres was used as the database system for this project. This is a tutorial fo
 ## Backend
 The backend is located in ../Spring/loom/.
 
-It is a Java Springboot project. I recommend opening ../Spring/loom in Intellij, but any Java IDE should work. It is a maven project; Intellij will prompt you to run the maven script when the project is opened in the bottom right corner. 
+It is a Java Springboot project. I recommend opening ../Spring/loom in [IntelliJ](https://www.jetbrains.com/idea/), but any Java IDE should work. It is a maven project; IntelliJ will prompt you to run the maven script when the project is opened in the bottom right corner. 
 
 To ensure the connection with Postgres, you can navigate to ../Spring/loom/src/main/resources/application.properties, and change the values for:
 - spring.datasource.url=jdbc:postgresql://localhost:5432/loom
@@ -19,7 +19,7 @@ To ensure the connection with Postgres, you can navigate to ../Spring/loom/src/m
 - spring.datasource.password=password
 To match your Postgres credentials and setup.
 
-Now you can run the project from ../Spring/loom/src/main/java/com/pg2/loom/LoomApplication.java. When ran for the first time, if using Intellij, you will be prompted to enable annotation processing. Enable this. If you miss it, you can do it through Preferences -> Build, Execution, Deployment -> Compiler -> Annotation Processors to check Enable annotation processing and Obtain processors from project classpath.
+Now you can run the project from ../Spring/loom/src/main/java/com/pg2/loom/LoomApplication.java. When ran for the first time, if using IntelliJ, you will be prompted to enable annotation processing. Enable this. If you miss it, you can do it through Preferences -> Build, Execution, Deployment -> Compiler -> Annotation Processors to check Enable annotation processing and Obtain processors from project classpath.
 
 The project should complete its Spring initialization without any problems.
 
@@ -74,11 +74,11 @@ As mentioned earlier, this project was implemented in the pub-sub, and then the 
 
 The main difference in each of these implementations is the way that the backend and frontend communicate with each other. In pub-sub (the selected directory), they communicate using websockets. The backend, and each frontend client are treated as both subscribers and publishers. The backend is subscribed to all channels (implemented as websockets), while each frontend client is either subscribed to the homepage channel for retrieving and posting threads, or a channel for a specific thread. When a frontend client enters a thread, it is subscribed to a unique web socket for that thread. If the socket doesn't already exist, it is created and the backend is also subscribed. If all frontend subscribers leave, the backend also unsubscribes and the socket is closed. Subscribers to the hompage channel can publish new threads which will update all subscribers' homepages. Subscribers to a thread can publish a comment or a vote which is updated for all subscribers immediately.
 
-This is mostly managed through web socket classes in both the front and backend.
+This is mostly managed through web socket classes in both the front and backend. Java uses WebSocketHomeHandler.java, WebSocketThreadHandler.java, and WebSocketConfig.java. Javascript uses WebSocketHomeService.ts and WebSocketThreadService.ts. Most UseEffect() in components are different to reflect this.
 
 In client-server (the unselected directory), communication is instead done through a RESTful API using HTTP endpoints. The server doesn't keep track of client sessions as it doesn't know the client, and can only respond to client requests. As such, the clients each individually need to take iniative to check for new messages or threads, and repeatedly send out requests to the server to check for anything new.
 
-This is managed through service classes in the frontend and controller classes in the backend.
+This is managed through service classes in the frontend and controller classes in the backend. Java uses CommentController.java and ThreadController.java (these are unused in Selected). Javascript uses HomeService.ts and ThreadService.ts. UseEffect() in most components is different to reflect this.
 
 ## Reasons for Pub-sub
 Pub-sub was ultimately chosen as the better selection over client-server. Client-server may be simpler and more uniform in that you know a request always comes from the client is always responded to by the server. But since the server can't know all the clients, unlike in pub-sub where a channel knows all of its subscribers, a new thread can't be instantly propogated through everyone watching the homepage in client-server, demanding that each client constantly badger the server for updates. Pub-sub on the other hand treats all these clients as subscribers and one client making an upload immediately alerts all subscribers. They don't have to be checking constantly because they know that if they weren't alerted, nothing is new. This immediate response is required for a live chat service such as ours, and the lack of constant checks also makes the service a lot more resource efficient under pub-sub.

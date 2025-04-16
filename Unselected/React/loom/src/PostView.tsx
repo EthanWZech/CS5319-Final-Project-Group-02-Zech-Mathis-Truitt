@@ -6,6 +6,7 @@ import Comment from './Comment';
 import WebSocketThreadService from './websocket/WebSocketThreadService';
 import { ThreadWithComments } from './dto/ThreadWithComments';
 import { CommentType } from './Post';
+import ThreadService from './services/ThreadService';
 
 const normalizeCommentNode = (
     node: any,
@@ -32,12 +33,10 @@ const PostView = () => {
     useEffect(() => {
         if (!post) return;
 
-        WebSocketThreadService.connect(post.id.toString(), (data) => {
-        setThread(data);
-        });
+        ThreadService.pingThreads(setThread, 1)
 
         return () => {
-        WebSocketThreadService.disconnect();
+
         };
     }, [post]);
 

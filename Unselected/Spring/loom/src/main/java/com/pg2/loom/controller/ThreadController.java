@@ -2,10 +2,7 @@ package com.pg2.loom.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pg2.loom.dto.AddThreadRequest;
-import com.pg2.loom.dto.HomeThreadsDto;
-import com.pg2.loom.dto.ThreadDto;
-import com.pg2.loom.dto.ThreadWithCommentsDto;
+import com.pg2.loom.dto.*;
 import com.pg2.loom.entity.Thread;
 import com.pg2.loom.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +57,15 @@ public class ThreadController {
     @PostMapping
     public Long createThread(@RequestBody AddThreadRequest thread) {
         return threadService.createThread(thread);
+    }
+
+    @PostMapping("/{id}/vote")
+    public void voteThread(@PathVariable String id, @RequestBody VoteRequest voteRequest) {
+        if(voteRequest.isVote())
+            threadService.upvoteThread(Long.valueOf(id));
+        else
+            threadService.downvoteThread(Long.valueOf(id));
+
     }
 
     @PostMapping("/{id}/upvote")

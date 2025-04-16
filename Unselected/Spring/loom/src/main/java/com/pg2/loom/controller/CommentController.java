@@ -33,7 +33,11 @@ public class CommentController {
     @PostMapping("/thread/{threadId}")
     public ResponseEntity<Long> addCommentToThread(
             @RequestBody AddCommentRequest request) {
-        Long commentId = commentService.addCommentToThread(request);
+        Long commentId;
+        if(request.getParentCommentId() == null)
+            commentId = commentService.addCommentToThread(request);
+        else
+            commentId = commentService.addReplyToComment(request);
         return ResponseEntity.ok(commentId);
     }
 

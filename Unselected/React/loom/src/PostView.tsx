@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { PostVars } from './Post';
 import './PostView.css';
 import Comment from './Comment';
-import WebSocketThreadService from './websocket/WebSocketThreadService';
 import { ThreadWithComments } from './dto/ThreadWithComments';
 import { CommentType } from './Post';
 import ThreadService from './services/ThreadService';
@@ -61,7 +60,7 @@ const PostView = () => {
     };
 
     const handleVote = (upvote: boolean) => {
-        WebSocketThreadService.sendVote({ vote: upvote });
+        ThreadService.sendVote({ vote: upvote }, thread.id);
     };
 
     return (

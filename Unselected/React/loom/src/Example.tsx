@@ -3,8 +3,6 @@ import './App.css';
 import './Example.css'
 import { AddCommentRequest } from './dto/AddCommentRequest';
 import { ThreadWithComments } from './dto/ThreadWithComments';
-import WebSocketThreadService from './websocket/WebSocketThreadService';
-import WebSocketHomeService from './websocket/WebSocketHomeService';
 import { HomeThreads } from './dto/HomeThreads';
 import ThreadService from './services/ThreadService';
 import HomeService from './services/HomeService';

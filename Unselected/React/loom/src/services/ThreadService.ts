@@ -1,5 +1,6 @@
 import { AddCommentRequest } from "../dto/AddCommentRequest";
 import { ThreadWithComments } from "../dto/ThreadWithComments";
+import { VoteRequest } from "../dto/VoteRequest";
 
 type ThreadWithCommentsListener = (data: ThreadWithComments) => void;
 
@@ -26,6 +27,16 @@ class ThreadService {
             data
         }));
         fetch(`http://localhost:8080/comments/thread/${threadId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
+    sendVote(data: VoteRequest, threadId: number) {
+        fetch(`http://localhost:8080/threads/${threadId}/vote`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

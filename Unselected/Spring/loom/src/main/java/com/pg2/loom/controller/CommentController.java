@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
@@ -32,15 +33,8 @@ public class CommentController {
     @PostMapping("/thread/{threadId}")
     public ResponseEntity<Long> addCommentToThread(
             @RequestBody AddCommentRequest request) {
-        
-        try {
-            Long commentId = commentService.addCommentToThread(request);
-            return ResponseEntity.ok(commentId);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        Long commentId = commentService.addCommentToThread(request);
+        return ResponseEntity.ok(commentId);
     }
 
     @PostMapping("/thread/{threadId}/comment/{commentId}/reply")

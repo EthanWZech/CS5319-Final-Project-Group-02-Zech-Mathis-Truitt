@@ -1,21 +1,28 @@
 package com.pg2.loom.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg2.loom.dto.AddThreadRequest;
 import com.pg2.loom.dto.ThreadDto;
+import com.pg2.loom.dto.ThreadWithCommentsDto;
 import com.pg2.loom.entity.Thread;
 import com.pg2.loom.service.ThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.TextMessage;
 
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/threads")
 public class ThreadController {
 
     private final ThreadService threadService;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     public ThreadController(ThreadService threadService) {
@@ -23,10 +30,14 @@ public class ThreadController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Thread> getThreadById(@PathVariable Long id) {
-        Optional<Thread> threadOptional = threadService.getThreadById(id);
-        return threadOptional.map(ResponseEntity::ok)
-                             .orElse(ResponseEntity.notFound().build());
+    public TextMessage getThreadById(@PathVariable String id) throws JsonProcessingException {
+        ThreadWithCommentsDto threadTree = threadService.getThreadAsTree(Long.valueOf(id));
+
+        return new TextMessage(mapper.writeValueAsString(threadTree));
+
+//        Optional<Thread> threadOptional = threadService.getThreadById(id);
+//        return threadOptional.map(ResponseEntity::ok)
+//                             .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/topic/{topic}")

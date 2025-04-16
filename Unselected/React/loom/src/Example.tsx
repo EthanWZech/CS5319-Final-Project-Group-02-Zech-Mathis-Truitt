@@ -6,6 +6,7 @@ import { ThreadWithComments } from './dto/ThreadWithComments';
 import WebSocketThreadService from './websocket/WebSocketThreadService';
 import WebSocketHomeService from './websocket/WebSocketHomeService';
 import { HomeThreads } from './dto/HomeThreads';
+import ThreadService from './services/ThreadService';
 
 export const Example = () => {
   const thingamajig = (num: number) => {
@@ -17,32 +18,33 @@ export const Example = () => {
   const [homeThreads, setHomeThreads] = useState<HomeThreads | null>(null);
 
   useEffect(() => {
-    WebSocketThreadService.connect("1", (data) => { setThread(data) });
-    WebSocketHomeService.connect((data) => { setHomeThreads(data) })
+    //WebSocketThreadService.connect("1", (data) => { setThread(data) });
+    ThreadService.pingThreads(setThread, 1);
+    //WebSocketHomeService.connect((data) => { setHomeThreads(data) })
 
     return () => {
-      WebSocketThreadService.disconnect();
-      WebSocketHomeService.disconnect();
+      //WebSocketThreadService.disconnect();
+      //WebSocketHomeService.disconnect();
     }
   }, ["1"]);
 
   const postComment = (msg: string) => {
-    WebSocketThreadService.addComment( { threadId: 1, parentCommentId: null, username: "TestCommenter", text: msg, image: null } );
+    ThreadService.addComment( { threadId: 1, parentCommentId: null, username: "TestCommenter", text: msg, image: null }, 1 );
   }
 
   const postThread = (msg: string) => {
-    WebSocketHomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } );
+    //WebSocketHomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } );
   }
 
-  const upvoteThread = () => {
-    WebSocketThreadService.sendVote( { vote: true });
-  }
+  // const upvoteThread = () => {
+  //   WebSocketThreadService.sendVote( { vote: true });
+  // }
 
-  const downvoteThread = () => {
-    WebSocketThreadService.sendVote( { vote: false });
-  }
+  // const downvoteThread = () => {
+  //   WebSocketThreadService.sendVote( { vote: false });
+  // }
 
-  if(!thread || !homeThreads){
+  if(!thread){
     return (
       <div>
           <h1 className='text-blue-500'>Hello</h1>
@@ -64,12 +66,12 @@ export const Example = () => {
           ))}
           <button onClick={() => postComment("This is a test comment")}>Send Comment</button>
           <div>This is the most recent Threads</div>
-          {homeThreads.threads.map((item, index) => (
+          {/* {homeThreads.threads.map((item, index) => (
             <div key={index}>{item.title} Upvotes: {item.upvotes} Downvotes: {item.downvotes}</div>
-          ))}
-          <button onClick={() => postThread("This is a test thread")}>Send Thread</button>
-          <button onClick={() => upvoteThread()}>Upvote Thread 1</button>
-          <button onClick={() => downvoteThread()}>Downvote Thread 1</button>
+          ))} */}
+          {/* <button onClick={() => postThread("This is a test thread")}>Send Thread</button> */}
+          {/* <button onClick={() => upvoteThread()}>Upvote Thread 1</button>
+          <button onClick={() => downvoteThread()}>Downvote Thread 1</button> */}
       </div>
     )
   }

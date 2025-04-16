@@ -7,6 +7,7 @@ import WebSocketThreadService from './websocket/WebSocketThreadService';
 import { ThreadWithComments } from './dto/ThreadWithComments';
 import { CommentType } from './Post';
 import ThreadService from './services/ThreadService';
+import { getGlobalUsername } from './Topbar';
 
 const normalizeCommentNode = (
     node: any,
@@ -33,7 +34,7 @@ const PostView = () => {
     useEffect(() => {
         if (!post) return;
 
-        ThreadService.pingThreads(setThread, 1)
+        ThreadService.pingThreads(setThread, (post.id))
 
         return () => {
 
@@ -46,15 +47,16 @@ const PostView = () => {
 
     const handleAddComment = () => {
         if (!commentText.trim()) return;
-
-        WebSocketThreadService.addComment({
-        threadId: thread.id,
-        parentCommentId: null,
-        username: 'TestUser',
-        text: commentText,
-        image: null
-        });
-
+        ThreadService.addComment(
+            {
+                threadId: thread.id,
+                parentCommentId: null,
+                username: getGlobalUsername(),
+                text: commentText,
+                image: null
+            },
+            thread.id
+        );
         setCommentText('');
     };
 

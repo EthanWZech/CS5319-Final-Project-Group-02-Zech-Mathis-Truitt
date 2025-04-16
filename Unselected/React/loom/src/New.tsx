@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import WebSocketHomeService from './websocket/WebSocketHomeService';
 import { getGlobalUsername } from './Topbar';
+import HomeService from './services/HomeService'; 
 import './New.css';
 
 const New = () => {
@@ -12,15 +12,17 @@ const New = () => {
   const [imageLink, setImageLink] = useState('');
 
   const postThread = () => {
-    WebSocketHomeService.addThread({
+    HomeService.addThread({
       topic,
       username: getGlobalUsername(),
       title,
       text: content,
-      image: imageLink || null, 
+      image: imageLink || null,
     });
 
-    navigate('/', { replace: true });
+    setTimeout(() => {
+      navigate('/', { replace: true });
+    }, 500); 
   };
 
   return (

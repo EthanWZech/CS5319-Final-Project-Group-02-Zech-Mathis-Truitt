@@ -14,7 +14,7 @@ import org.springframework.web.socket.TextMessage;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
 @RestController
 @RequestMapping("/threads")
 public class ThreadController {

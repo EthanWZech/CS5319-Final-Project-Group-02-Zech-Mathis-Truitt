@@ -17,11 +17,13 @@ const New = () => {
       username: getGlobalUsername(),
       title,
       text: content,
-      image: imageLink || null, 
+      image: imageLink || null,
     });
-
-    navigate('/', { replace: true });
+    setTimeout(() => {
+      navigate('/', { replace: true });
+    }, 1000);
   };
+
 
   return (
     <div className="newPost">

@@ -8,27 +8,17 @@ const Home = () => {
 
   useEffect(() => {
     const listener = (data: HomeThreads) => {
-      setHomeThreads((prev) => {
-        if (!prev) return data;
-  
-        const newThreads = data.threads.filter(
-          (newThread) => !prev.threads.some((t) => t.id === newThread.id)
-        );
-  
-        return {
-          ...prev,
-          threads: [...newThreads, ...prev.threads],
-        };
-      });
+      setHomeThreads(data); // Trust backend to send the right list
     };
-  
+
     WebSocketHomeService.connect(listener);
-  
+
     return () => {
+      WebSocketHomeService.disconnect();
     };
   }, []);
 
-  if (!homeThreads) return <div style={{color: '#000000'}}>Loading...</div>;
+  if (!homeThreads) return <div style={{ color: '#000000' }}>Loading...</div>;
 
   return (
     <div className="postFeed">

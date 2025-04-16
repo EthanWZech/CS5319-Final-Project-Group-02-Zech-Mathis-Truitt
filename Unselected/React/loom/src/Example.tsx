@@ -7,6 +7,7 @@ import WebSocketThreadService from './websocket/WebSocketThreadService';
 import WebSocketHomeService from './websocket/WebSocketHomeService';
 import { HomeThreads } from './dto/HomeThreads';
 import ThreadService from './services/ThreadService';
+import HomeService from './services/HomeService';
 
 export const Example = () => {
   const thingamajig = (num: number) => {
@@ -20,6 +21,7 @@ export const Example = () => {
   useEffect(() => {
     //WebSocketThreadService.connect("1", (data) => { setThread(data) });
     ThreadService.pingThreads(setThread, 1);
+    HomeService.pingHomeThreads(setHomeThreads);
     //WebSocketHomeService.connect((data) => { setHomeThreads(data) })
 
     return () => {
@@ -33,6 +35,7 @@ export const Example = () => {
   }
 
   const postThread = (msg: string) => {
+    HomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } );
     //WebSocketHomeService.addThread( { topic: "Development", username: "TestPoster", title: msg, text: "Whatever", image: null } );
   }
 
@@ -44,7 +47,7 @@ export const Example = () => {
   //   WebSocketThreadService.sendVote( { vote: false });
   // }
 
-  if(!thread){
+  if(!thread || !homeThreads){
     return (
       <div>
           <h1 className='text-blue-500'>Hello</h1>
@@ -66,10 +69,10 @@ export const Example = () => {
           ))}
           <button onClick={() => postComment("This is a test comment")}>Send Comment</button>
           <div>This is the most recent Threads</div>
-          {/* {homeThreads.threads.map((item, index) => (
+          {homeThreads.threads.map((item, index) => (
             <div key={index}>{item.title} Upvotes: {item.upvotes} Downvotes: {item.downvotes}</div>
-          ))} */}
-          {/* <button onClick={() => postThread("This is a test thread")}>Send Thread</button> */}
+          ))}
+          <button onClick={() => postThread("This is a test thread")}>Send Thread</button>
           {/* <button onClick={() => upvoteThread()}>Upvote Thread 1</button>
           <button onClick={() => downvoteThread()}>Downvote Thread 1</button> */}
       </div>

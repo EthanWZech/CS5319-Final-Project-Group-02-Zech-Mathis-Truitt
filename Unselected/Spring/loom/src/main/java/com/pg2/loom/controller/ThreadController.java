@@ -3,6 +3,7 @@ package com.pg2.loom.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pg2.loom.dto.AddThreadRequest;
+import com.pg2.loom.dto.HomeThreadsDto;
 import com.pg2.loom.dto.ThreadDto;
 import com.pg2.loom.dto.ThreadWithCommentsDto;
 import com.pg2.loom.entity.Thread;
@@ -46,8 +47,9 @@ public class ThreadController {
     }
 
     @GetMapping("/recent")
-    public List<ThreadDto> getRecentThreads() {
-        return threadService.getMostRecentThreads();
+    public TextMessage getRecentThreads() throws JsonProcessingException {
+        HomeThreadsDto topThreads = new HomeThreadsDto(threadService.getMostRecentThreads());
+        return new TextMessage(mapper.writeValueAsString(topThreads));
     }
 
     @GetMapping("/search")
